@@ -79,12 +79,11 @@ module y_carriage_bottom(y = 200) {
     translate([-x,y,z]) rotate([90,0,90]) import("Box Section Linear Guild STD.STL");    
     
     // dummy screws for positioning
-    len = 60;
-    /*
-    for (v = [0, 32, 64, 96], w = [-len+28,len-28]) {      
+    len = 80;
+    
+    for (v = [0, 32.3, 64.7, 97], w = [-len+28,len-28]) {      
     #translate([w,y+16.5+v,6.5]) rotate([0,90,0]) cylinder(h = len, r = 2.4, center = true, $fn=20);
     }
-    */
     
     translate([-x+18,y+27,z+15]) rotate([0,-45,0]) bearing_sandwich();
     
@@ -182,29 +181,82 @@ module motion_link() {
 module x_z_carriage(x = 100, y = 100) {
      
     // back
-    translate([x+126.5,116-(200-y),90]) x_z_carriage_plate_back();
+    translate([x+127,116-(200-y),90]) x_z_carriage_plate_back();
     
     // front (carriage is 64 mm thick, wood is 12)
-    translate([x+126.5+130,116+64-(200-y),79]) 
+    translate([x+127+130,116+64-(200-y),79]) 
     x_z_carriage_plate_front();
     
-    translate([x+167,238-(200-y),300]) z_bearing_top();
-    translate([x+215.5,238-(200-y),104]) z_bearing_bottom();
+    translate([x+167.5,238-(200-y),300]) z_bearing_top();
+    translate([x+216,238-(200-y),104]) z_bearing_bottom();
     
     // top
-    translate([x+126.5+108,116-(200-y),363]) nema_mount();
+    translate([x+127+108,116-(200-y),363]) nema_mount();
     
     // nema 17
-    translate([x+126.5+65,77-(200-y),322]) nema();
+    translate([x+127+65,77-(200-y),322]) nema();
+    
+    // pulley on top of upper nema
+    translate([x+127+65,77-(200-y),334-6]) rotate([0,0,0]) GT2Pulley();
     
     // bottom
-    translate([x+126.5+108,116-(200-y),224]) nema_mount();
+    translate([x+127+108,116-(200-y),224]) nema_mount();
     
     // nema 17
-    translate([x+126.5+65,77-(200-y),182]) nema();
+    translate([x+127+65,77-(200-y),182]) nema();
     
     // x belt idler
-    translate([x+126.5+22,128-(200-y),178]) x_belt_idler();    
+    translate([x+127+22,128-(200-y),178]) x_belt_idler();   
+   
+    // threaded rod
+    color("darkgray") translate([x+127+65,218-(200-y),95.5]) rotate([0,0,0]) cylinder(h = 249, r = 8/2, center = false, $fn=20);
+    
+    // pulley on top of threaded rod 
+    translate([x+127+65,218-(200-y),333-5]) rotate([0,0,0]) GT2Pulley();
+    
+    // belt
+    for (i = [0, 14.5]) {
+    color("black") translate([x+127+57+i,72-(200-y),336]) cube([1.5,150,6]);
+    }
+    
+    // rods
+    color("lightgray") translate([x+127+16.5,223-(200-y),87]) rotate([0,0,0]) cylinder(h = 242, r = 8/2, center = false, $fn=20);
+
+    color("lightgray") translate([x+127+113.5,223-(200-y),87]) rotate([0,0,0]) cylinder(h = 242, r = 8/2, center = false, $fn=20);
+    
+    // z linear bearing holder
+    //translate([x+127-98,204-(200-y),200]) rotate([-90,0,0]) import("Pastilla_eje_derecho.STL");
+    
+    // spindle mount           
+    translate([x+127+25.5,186-(200-y),200]) rotate([-90,0,]) z_spindle_mount(); 
+}
+
+module z_spindle_mount() {
+    
+    //translate([-24,0,20]) import("MGN 12 Spindle mount 52mm (NO Text).STL");
+    
+    // spindle_aluminum_holder.stl
+    color("gray") import("spindle_aluminum_holder.stl");
+    
+    difference() {
+        translate([-25,-2,20]) cube([130,40,30]);
+        
+        // lead scew nut bottom
+        translate([25,30,19]) cube([28,10,32]);
+        
+        // lead scew nut top
+        translate([25,-5,19]) cube([28,10,32]);
+        
+        // middle lead screw 
+        translate([39.5,42,32]) rotate([90,0,0]) cylinder(h = 50, r = 12/2, center = false, $fn=20);    
+     
+        // left rod
+        translate([88,42,32+5]) rotate([90,0,0]) cylinder(h = 50, r = 12/2, center = false, $fn=20);
+        
+        // right rod
+        translate([-8.5,42,32+5]) rotate([90,0,0]) cylinder(h = 50, r = 12/2, center = false, $fn=20);
+        
+    }
 }
 
 module x_z_carriage_plate_back() {
@@ -214,15 +266,25 @@ module x_z_carriage_plate_back() {
 
 module x_z_carriage_plate_front() {
     // plate is 249mm/224mm long, 130mm wide and 12mm thick
-    color("BurlyWood") translate([0,12,0]) rotate([-90,180,0]) import("X Carriage Wooden Panel Front.STL");   
+    color("BurlyWood") translate([0,12,0]) rotate([-90,180,0]) import("X Carriage Wooden Panel Front.STL");       
+    
+    //color("BurlyWood") translate([0,12,11]) rotate([-90,180,0]) import("X Carriage Rework wood pannel BACK & Front Compatible.STL");
 }
 
 module z_bearing_bottom() {
-    rotate([90,180,0]) import("Z Axis Bearing Cup Bottom.STL");
+    //rotate([90,180,0]) import("Z Axis Bearing Cup Bottom.STL");
+    
+    translate([-121,15.5,24]) rotate([0,180,0]) import("Part_2_V1_--_Bottom--.stl");
+    
+    translate([-24,-20,8]) rotate([0,0,0]) bearing();
 }
 
 module z_bearing_top() {
-    rotate([90,0,0]) import("Z Axis Bearing Cup Top.STL");
+    //rotate([90,0,0]) import("Z Axis Bearing Cup Top.STL");
+    
+    translate([-91.5,185,-2.5-5]) rotate([0,0,180]) import("Part_3_V1_--_Top--.stl");
+    
+    translate([24,-20,26-5]) rotate([0,0,0]) bearing();
 }
 
 module nema_mount() {
@@ -257,6 +319,7 @@ y_len = 800;
 x_pos = -290;      // from 0(500) or -290(800) to 220
 y_pos = 300;    // from 30 to y_len - 160
 
+/*
 mount();
 translate([30,0,30]) rotate([0,0,90]) rect_tube(y_len);
 translate([0,y_len,0]) mirror([0,1,0]) mount();
@@ -279,6 +342,7 @@ translate([62+18-50,y_pos-40,105+17]) y_axix_sync(x_len);
 
 // upper x  rect tube
 translate([62+18,y_pos-40,105+155.5]) rect_tube(x_len-100);
+*/
 
 x_carriage(x_pos, y_pos);
 translate([0,0,155]) x_carriage(x_pos, y_pos);
