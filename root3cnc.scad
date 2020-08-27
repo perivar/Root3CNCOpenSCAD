@@ -179,7 +179,7 @@ module motion_link() {
 }
 
 module x_z_carriage(x = 100, y = 100) {
-     
+         
     // back
     translate([x+127,116-(200-y),90]) x_z_carriage_plate_back();
     
@@ -225,7 +225,7 @@ module x_z_carriage(x = 100, y = 100) {
     color("lightgray") translate([x+127+113.5,223-(200-y),87]) rotate([0,0,0]) cylinder(h = 242, r = 8/2, center = false, $fn=20);
     
     // z linear bearing holder
-    //translate([x+127-98,204-(200-y),200]) rotate([-90,0,0]) import("Pastilla_eje_derecho.STL");
+    //translate([x+127-98,204-(200-y),200]) rotate([-90,0,0]) import("Z Axis Smooth Rod Mount Right.stl");
     
     // spindle mount           
     translate([x+127+25.5,186-(200-y),200]) rotate([-90,0,]) z_spindle_mount(); 
@@ -235,28 +235,53 @@ module z_spindle_mount() {
     
     //translate([-24,0,20]) import("MGN 12 Spindle mount 52mm (NO Text).STL");
     
+    if (true) {
     // spindle_aluminum_holder.stl
     color("gray") import("spindle_aluminum_holder.stl");
     
-    difference() {
-        translate([-25,-2,20]) cube([130,40,30]);
+    %difference() {
+        union() {
+            translate([-9,-2,22]) cube([97,40,30]);
+            
+            translate([-9,38,37]) rotate([90,0,0]) cylinder(h = 40, r = 30/2, center = false, $fn=20);
+            
+            translate([88,38,37]) rotate([90,0,0]) cylinder(h = 40, r = 30/2, center = false, $fn=20);
+                    }
         
         // lead scew nut bottom
-        translate([25,30,19]) cube([28,10,32]);
+    nut_depth = 5;
+    translate([25,38+epsilon-nut_depth,22-epsilon]) cube([28,nut_depth,30+2*epsilon]);
         
         // lead scew nut top
-        translate([25,-5,19]) cube([28,10,32]);
+        translate([25,-12-epsilon+nut_depth,22-epsilon]) cube([28,10,30+2*epsilon]);
         
         // middle lead screw 
         translate([39.5,42,32]) rotate([90,0,0]) cylinder(h = 50, r = 12/2, center = false, $fn=20);    
      
         // left rod
-        translate([88,42,32+5]) rotate([90,0,0]) cylinder(h = 50, r = 12/2, center = false, $fn=20);
+        translate([88,42,37]) rotate([90,0,0]) cylinder(h = 50, r = 12/2, center = false, $fn=20);
         
         // right rod
-        translate([-8.5,42,32+5]) rotate([90,0,0]) cylinder(h = 50, r = 12/2, center = false, $fn=20);
-        
+        translate([-9,42,37]) rotate([90,0,0]) cylinder(h = 50, r = 12/2, center = false, $fn=20);
+    
+           // screw holes to the spindle holder and indents
+           translate([-5.7,36,80]) rotate([90,0,0]) for (i = [10,80], j = [8, 28]) {
+               // screw hole
+               translate([i,20,j]) rotate([90,0,0]) cylinder(r=3, h=80);  
+               
+               // screw head indents
+              indent_depth = 15;
+               translate([i,-58-epsilon+indent_depth,j]) rotate([90,0,0]) cylinder(r=11/2, h=indent_depth);  
+          }                                 
+        }
     }
+    
+    // top nut
+    //translate([39.5,-2,34]) rotate ([-90,0,0]) import("Lead Screw Nut.stl");
+    
+    // bottom nut
+    color("brown") translate([39.5,37-5,34-2]) rotate ([90,45,0]) import("Lead Screw Nut.stl");
+
 }
 
 module x_z_carriage_plate_back() {
@@ -274,7 +299,7 @@ module x_z_carriage_plate_front() {
 module z_bearing_bottom() {
     //rotate([90,180,0]) import("Z Axis Bearing Cup Bottom.STL");
     
-    translate([-121,15.5,24]) rotate([0,180,0]) import("Part_2_V1_--_Bottom--.stl");
+    translate([-121,15.5,24]) rotate([0,180,0]) import("Z Axis Mount Smooth Rods Bottom.stl");
     
     translate([-24,-20,8]) rotate([0,0,0]) bearing();
 }
@@ -282,7 +307,7 @@ module z_bearing_bottom() {
 module z_bearing_top() {
     //rotate([90,0,0]) import("Z Axis Bearing Cup Top.STL");
     
-    translate([-91.5,185,-2.5-5]) rotate([0,0,180]) import("Part_3_V1_--_Top--.stl");
+    translate([-91.5,185,-2.5-5]) rotate([0,0,180]) import("Z Axis Mount Smooth Rods Top.stl");
     
     translate([24,-20,26-5]) rotate([0,0,0]) bearing();
 }
@@ -319,7 +344,6 @@ y_len = 800;
 x_pos = -290;      // from 0(500) or -290(800) to 220
 y_pos = 300;    // from 30 to y_len - 160
 
-/*
 mount();
 translate([30,0,30]) rotate([0,0,90]) rect_tube(y_len);
 translate([0,y_len,0]) mirror([0,1,0]) mount();
@@ -342,8 +366,10 @@ translate([62+18-50,y_pos-40,105+17]) y_axix_sync(x_len);
 
 // upper x  rect tube
 translate([62+18,y_pos-40,105+155.5]) rect_tube(x_len-100);
-*/
 
 x_carriage(x_pos, y_pos);
 translate([0,0,155]) x_carriage(x_pos, y_pos);
 x_z_carriage(199-x_pos, y_pos);
+
+
+//!z_spindle_mount();
