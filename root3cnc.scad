@@ -50,8 +50,12 @@ module square_tube(len=500) {
     }    
 }
 
-module mount() {
-    translate([60,25,0]) rotate([0,0,180]) import("Y Axis Bar Mount 25x25 2mm STD.STL");
+module mount(mirror = false) {
+    if (mirror) {
+        translate([60,25,0]) rotate([0,0,180]) import("Y Axis Bar Mount 25x25 2mm Mirror.STL");
+    } else {
+        translate([60,25,0]) rotate([0,0,180]) import("Y Axis Bar Mount 25x25 2mm STD.STL");
+    }
     translate([0,25,90]) rotate([90,0,0]) mount_cap();
 }
 
@@ -350,7 +354,7 @@ translate([0,y_len,0]) mirror([0,1,0]) mount();
 
 translate([x_len+60,0,0]) mirror([1,0,0]) mount();
 translate([x_len+30,0,30]) rotate([0,0,90]) rect_tube(y_len);
-translate([x_len,y_len,0]) mirror([0,1,0]) mount();
+translate([x_len,y_len,0]) mirror([0,1,0]) mount(true);
 
 y_carriage(y_pos);
 translate([x_len,0,0]) y_carriage(y_pos);
