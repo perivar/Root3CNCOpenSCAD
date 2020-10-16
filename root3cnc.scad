@@ -3,9 +3,9 @@ use <MCAD/bearing.scad>;
 use <MCAD/nuts_and_bolts.scad>;
 use <MCAD/metric_fastners.scad>;
 
-include <C:\Users\perner\My Projects\PulpitRockCNC3D\stepper.scad>
+include <C:\Users\periv\My Projects\PulpitRockCNC3D\stepper.scad>
 
-use <C:\Users\perner\My Projects\PulpitRockCNC3D\20-GT2-6 Timing Pulley.scad>
+use <C:\Users\periv\My Projects\PulpitRockCNC3D\20-GT2-6 Timing Pulley.scad>
 
 
 /*
@@ -179,7 +179,9 @@ module y_bearing_space() {
 module motion_link() {
     //rotate([0,90,0]) import("Y Gantry Motion Link.STL");
     
-    translate([-12,22.1,-80]) rotate([90,90,0]) import("Y Gantry Motion Link Remix.stl");
+    //translate([-12,22.1,-80]) rotate([90,90,0]) import("Y Gantry Motion Link Remix.stl");
+    
+    translate([0,36,0]) rotate([-90,0,0]) rotate([0,90,0]) import("RenfortTigeTraversante.stl");
 }
 
 module x_z_carriage(x = 100, y = 100) {
@@ -224,9 +226,10 @@ module x_z_carriage(x = 100, y = 100) {
     }
     
     // rods
-    color("lightgray") translate([x+127+16.5,223-(200-y),87]) rotate([0,0,0]) cylinder(h = 242, r = 8/2, center = false, $fn=20);
+    // right //color("lightgray") translate([x+127+16.5,223-(200-y),87]) rotate([0,0,0]) cylinder(h = 242, r = 8/2, center = false, $fn=20);
 
-    color("lightgray") translate([x+127+113.5,223-(200-y),87]) rotate([0,0,0]) cylinder(h = 242, r = 8/2, center = false, $fn=20);
+    // left
+    //color("lightgray") translate([x+127+113.5,223-(200-y),87]) rotate([0,0,0]) cylinder(h = 242, r = 8/2, center = false, $fn=20);
     
     // z linear bearing holder
     //translate([x+127-98,204-(200-y),200]) rotate([-90,0,0]) import("Z Axis Smooth Rod Mount Right.stl");
@@ -236,10 +239,15 @@ module x_z_carriage(x = 100, y = 100) {
 }
 
 module z_spindle_mount() {
+original = true;
     
-    //translate([-24,0,20]) import("MGN 12 Spindle mount 52mm (NO Text).STL");
+    if (original) {
+    translate([103,0,20]) rotate([0,0,180]) import("MGN 12 Spindle mount 52mm (Text).STL");
+
+    translate([103,35,20]) rotate([0,0,180]) import("MGN 12 Spindle mount 52mm (NO Text).STL");
+    }
     
-    if (true) {
+    if (!original) {
     // spindle_aluminum_holder.stl
     color("gray") import("spindle_aluminum_holder.stl");
     
@@ -284,7 +292,10 @@ module z_spindle_mount() {
     //translate([39.5,-2,34]) rotate ([-90,0,0]) import("Lead Screw Nut.stl");
     
     // bottom nut
-    color("brown") translate([39.5,37-5,34-2]) rotate ([90,45,0]) import("Lead Screw Nut.stl");
+    //color("brown") translate([39.5,37-5,34-2]) rotate ([90,45,0]) import("Lead Screw Nut.stl");
+    
+    
+    color("red") translate([39.5,-36,34-2]) rotate ([90,45,0]) import("Lead Screw Nut.stl");
 
 }
 
@@ -301,17 +312,19 @@ module x_z_carriage_plate_front() {
 }
 
 module z_bearing_bottom() {
-    //rotate([90,180,0]) import("Z Axis Bearing Cup Bottom.STL");
+    rotate([90,180,0]) import("Z Axis Bearing Cup Bottom.STL");
     
-    translate([-121,15.5,24]) rotate([0,180,0]) import("Z Axis Mount Smooth Rods Bottom.stl");
+    translate([-24,-20,-7]) rotate([0,0,0]) bearing();
     
-    translate([-24,-20,8]) rotate([0,0,0]) bearing();
+    //translate([-121,15.5,24]) rotate([0,180,0]) import("Z Axis Mount Smooth Rods Bottom.stl");
+    
+    //translate([-24,-20,8]) rotate([0,0,0]) bearing();
 }
 
 module z_bearing_top() {
-    //rotate([90,0,0]) import("Z Axis Bearing Cup Top.STL");
+    rotate([90,0,0]) import("Z Axis Bearing Cup Top.STL");
     
-    translate([-91.5,185,-2.5-5]) rotate([0,0,180]) import("Z Axis Mount Smooth Rods Top.stl");
+       //translate([-91.5,185,-2.5-5]) rotate([0,0,180]) import("Z Axis Mount Smooth Rods Top.stl");
     
     translate([24,-20,26-5]) rotate([0,0,0]) bearing();
 }
