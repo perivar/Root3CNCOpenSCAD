@@ -131,6 +131,11 @@ module gantry() {
   
     translate([40,170,112]) rotate([0,-90,0]) GT2Pulley();  
     
+   
+    // x axis belt clamp
+    translate([-31,63.5,161]) XAxisBeltClamp();
+   
+    
     // belts
     color("black") translate([26,26,112+5]) cube([6,150,1.5]);
     
@@ -154,6 +159,13 @@ module gantry_right_side(y = 200) {
 
 module gantry_left_side(y = 200, len = 500) {
     translate([-2+len,y-75,10.5]) gantry();       
+}
+
+module XAxisBeltClamp() {
+    translate([0,0,0]) rotate([90,0,0]) rotate([0,-90,0]) import("X Axis Belt Clamp 2mm GT2 Belt Plate.stl");
+   
+    translate([-5,-57,57])
+    rotate([-90,0,0]) rotate([0,-90,0])import("X_axis_Belt_Mount_2mm__V2.stl");
 }
 
 module nema_spacer() {
@@ -196,20 +208,38 @@ module x_z_carriage(x = 100, y = 100) {
     translate([x+167.5,238-(200-y),300]) z_bearing_top();
     translate([x+216,238-(200-y),104]) z_bearing_bottom();
     
-    // top
+    // top nema mount
     translate([x+127+108,116-(200-y),363]) nema_mount();
     
     // nema 17
     translate([x+127+65,77-(200-y),322]) nema();
     
     // pulley on top of upper nema
-    translate([x+127+65,77-(200-y),334-6]) rotate([0,0,0]) GT2Pulley();
+    translate([x+127+65,77-(200-y),328]) rotate([0,0,0]) GT2Pulley();
     
-    // bottom
+    // upper belt
+    for (i = [0, 14.5]) {
+    color("black") translate([x+127+57+i,72-(200-y),336]) cube([1.5,150,6]);
+    }    
+    
+    // bottom nema mount
     translate([x+127+108,116-(200-y),224]) nema_mount();
     
     // nema 17
     translate([x+127+65,77-(200-y),182]) nema();
+    
+    // pulley on top of lower nema
+    translate([x+127+65,77-(200-y),194]) rotate([0,0,0]) GT2Pulley();
+    
+    // lower belt
+    for (i = [0, 14.5]) {
+    color("black") translate([x+127+57+i,72-(200-y),202]) cube([1.5,80,6]);
+    }    
+
+    color("black") translate([x+127+67,150-(200-y),202]) cube([x-20,1.5,6]);
+
+    color("black") translate([60,150-(200-y),202]) cube([x+110,1.5,6]);
+
     
     // x belt idler
     translate([x+127+22,128-(200-y),178]) x_belt_idler();   
@@ -220,10 +250,6 @@ module x_z_carriage(x = 100, y = 100) {
     // pulley on top of threaded rod 
     translate([x+127+65,218-(200-y),333-5]) rotate([0,0,0]) GT2Pulley();
     
-    // belt
-    for (i = [0, 14.5]) {
-    color("black") translate([x+127+57+i,72-(200-y),336]) cube([1.5,150,6]);
-    }
     
     // rods
     // right //color("lightgray") translate([x+127+16.5,223-(200-y),87]) rotate([0,0,0]) cylinder(h = 242, r = 8/2, center = false, $fn=20);
@@ -295,7 +321,7 @@ original = true;
     //color("brown") translate([39.5,37-5,34-2]) rotate ([90,45,0]) import("Lead Screw Nut.stl");
     
     
-    color("red") translate([39.5,-36,34-2]) rotate ([90,45,0]) import("Lead Screw Nut.stl");
+    color("lightgray") translate([39.5,-36,34-2]) rotate ([90,45,0]) import("Lead Screw Nut.stl");
 
 }
 
@@ -356,9 +382,9 @@ module y_axix_sync(len=200) {
 }
     
 
-x_len = 800;
+x_len = 500;
 y_len = 800;
-x_pos = -290;      // from 0(500) or -290(800) to 220
+x_pos = 50;      // from 0(500) or -290(800) to 220
 y_pos = 300;    // from 30 to y_len - 160
 
 mount();
