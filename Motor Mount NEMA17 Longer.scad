@@ -1,6 +1,17 @@
 
-//import("Motor Mount NEMA17.STL");
+//!import("Motor Mount NEMA17.STL");
 epsilon = 0.1;
+
+// to lengthen adjust these two:
+extra = 15; // 15
+deg = 4; // 4
+
+//-------------
+length = 86;
+depth = 46;
+height = 73+extra;
+degrees = 27.6-deg; 
+
 
 nema17_holder();
 
@@ -9,67 +20,69 @@ module nema17_holder() {
   difference() {
 
     // main box
-    cube([86,46,73]);   
+    cube([length,depth,height]);   
    
     // skewed box
-    translate([-epsilon,-3.1,0]) rotate([62.4,0,0]) cube([86+2*epsilon,90,50]);    
+    translate([-epsilon,-3.1,0]) rotate([90-degrees,0,0]) cube([length+2*epsilon,length*2,depth+10]);    
     
     // skewed chamfer
-    translate([0,-30.5,0]) rotate([-27.6,0,0]) rotate([0,0,45]) cube([20,20,100]);   
-   
+    translate([0,-30.5,0]) rotate([-degrees,0,0]) rotate([0,0,45]) cube([20,20,length+30]);   
     // skewed chamfer
-    translate([86,-30.5,0]) rotate([-27.6,0,0]) rotate([0,0,45]) cube([20,20,100]);      
+    translate([length,-30.5,0]) rotate([-degrees,0,0]) rotate([0,0,45]) cube([20,20,length+30]);      
     
     // straight chamfer
-    translate([0,46-4,0])  rotate([0,0,45]) cube([20,20,100]);   
+    translate([0,depth-4,-epsilon]) rotate([0,0,45]) cube([20,20,length+30]);   
     
     // straight chamfer
-    translate([86,46-4,0])  rotate([0,0,45]) cube([20,20,100]);   
+    translate([length,depth-4,-epsilon]) rotate([0,0,45]) cube([20,20,length+30]);   
     
     // cutout a rounded shape
     hull() {
         //left
-        translate([20-2*epsilon,46-11,11-epsilon]) rotate([90,0,0]) cylinder(d=10, h=46-11+epsilon, $fn = 30, center=false);
+        translate([20-2*epsilon,depth-11-deg,11-epsilon]) rotate([90,0,0]) cylinder(d=10, h=depth-11+epsilon, $fn=30, center=false);
 
-        translate([20+2*epsilon,30,11-epsilon]) rotate([0,0,0]) cylinder(d=10, h=86, $fn = 30, center=false);
+        translate([20+2*epsilon,depth-16,11-epsilon]) rotate([0,0,0]) cylinder(d=10, h=86, $fn = 30, center=false);
 
         // right
-        translate([86-20+2*epsilon,46-11,11-epsilon]) rotate([90,0,0]) cylinder(d=10, h=46-11+epsilon, $fn = 30, center=false);
+        translate([length-20+2*epsilon,depth-11-deg,11-epsilon]) rotate([90,0,0]) cylinder(d=10, h=depth-11+epsilon, $fn=30, center=false);
 
-        translate([86-20+2*epsilon,30,11-epsilon]) rotate([0,0,0]) cylinder(d=10, h=86, $fn = 30, center=false);    
+        translate([length-20+2*epsilon,depth-16,11-epsilon]) rotate([0,0,0]) cylinder(d=10, h=86, $fn=30, center=false);    
     }
 
     // window
-    translate([23,11,-epsilon]) rotate([0,0,0]) cube([40,24,6+2*epsilon]); 
+    win_length = 40;
+    translate([length/2-win_length/2,11,-epsilon]) rotate([0,0,0]) cube([win_length,depth-22,6+2*epsilon+20]); 
 
     // screw slots
     union() {
         // indented back plate
-        translate([21,43,10]) cube([44,3+epsilon,59]);
+        translate([21,depth-3,10]) cube([length-2*21,3+epsilon,height-14]);
 
-        translate([27.5,43,16.5]) {
+        // screw slots
+        translate([length/2-15.5,depth-3,16.5+extra]) {
             screw_slot(0, 15, 0);
             screw_slot(31, 15, 0);            
             screw_slot(0, 15, 31);
             screw_slot(31, 15, 31);
         }
     
-        translate([43,43,47]) motor_hole();
+        // motor hole
+        translate([length/2,depth-3,47+extra]) motor_hole(length=15, thickness=8);
 
         // front nut and screw slots
         translate([7,5.5,0]) hex_screw_hole(screw_dia=3, flats_dia=5.5, nut_height=20, screw_height=4, clearance=0.26);
 
-        translate([43,5.5,0]) hex_screw_hole(screw_dia=3, flats_dia=5.5, nut_height=20, screw_height=4, clearance=0.26);
+        translate([length/2,5.5,0]) hex_screw_hole(screw_dia=3, flats_dia=5.5, nut_height=20, screw_height=4, clearance=0.26);
 
-        translate([79,5.5,0]) hex_screw_hole(screw_dia=3, flats_dia=5.5, nut_height=20, screw_height=4, clearance=0.26);
+        translate([length-7,5.5,0]) hex_screw_hole(screw_dia=3, flats_dia=5.5, nut_height=20, screw_height=4, clearance=0.26);
 
         // back nut and screw slots
-        translate([43,40.5,0]) hex_screw_hole(screw_dia=3, flats_dia=5.5, nut_height=20, screw_height=4, clearance=0.26);
+        translate([length/2,depth-5.5,0]) hex_screw_hole(screw_dia=3, flats_dia=5.5, nut_height=20, screw_height=4, clearance=0.26);
 
         // inner screw slots
-        translate([7,40.5,0]) inner_hex_screw_hole(screw_dia=3, flats_dia=5.5, nut_height=4, screw_height=20, clearance=0.26);
+        translate([7,depth-5.5,0]) inner_hex_screw_hole(screw_dia=3, flats_dia=5.5, nut_height=4, screw_height=20, clearance=0.26);
 
-        translate([79,40.5,0]) inner_hex_screw_hole(screw_dia=3, flats_dia=5.5, nut_height=4, screw_height=20, clearance=0.26, flip=true);     
+        translate([length-7,depth-5.5,0]) inner_hex_screw_hole(screw_dia=3, flats_dia=5.5, nut_height=4, screw_height=20, clearance=0.26, flip=true);     
     }
   }
 }
